@@ -1,4 +1,4 @@
-package io.snow1026.snowlib;
+package io.github.snow1026.snowlib;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

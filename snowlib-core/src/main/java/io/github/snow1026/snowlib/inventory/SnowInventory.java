@@ -1,8 +1,8 @@
-package io.snow1026.snowlib.inventory;
+package io.github.snow1026.snowlib.inventory;
 
-import io.snow1026.snowlib.SnowLibrary;
-import io.snow1026.snowlib.utils.InventoryUtils;
-import io.snow1026.snowlib.utils.Mm;
+import io.github.snow1026.snowlib.SnowLibrary;
+import io.github.snow1026.snowlib.utils.InventoryUtils;
+import io.github.snow1026.snowlib.utils.Mm;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;

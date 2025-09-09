@@ -1,6 +1,6 @@
-package io.snow1026.snowlib.command;
+package io.github.snow1026.snowlib.command;
 
-import io.snow1026.snowlib.utils.reflect.ReflectFinder;
+import io.github.snow1026.snowlib.utils.reflect.ReflectFinder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;

@@ -1,4 +1,4 @@
-package io.snow1026.snowlib.utils;
+package io.github.snow1026.snowlib.utils;
 
 /**
  * Utility functions (currently placeholder for future use)

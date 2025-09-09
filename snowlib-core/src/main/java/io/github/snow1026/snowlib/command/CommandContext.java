@@ -1,4 +1,4 @@
-package io.snow1026.snowlib.command;
+package io.github.snow1026.snowlib.command;
 
 import org.bukkit.command.CommandSender;
 

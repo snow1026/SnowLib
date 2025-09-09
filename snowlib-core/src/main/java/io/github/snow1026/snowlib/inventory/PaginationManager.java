@@ -1,6 +1,6 @@
-package io.snow1026.snowlib.inventory;
+package io.github.snow1026.snowlib.inventory;
 
-import io.snow1026.snowlib.utils.InventoryUtils;
+import io.github.snow1026.snowlib.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

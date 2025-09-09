@@ -1,4 +1,4 @@
-package io.snow1026.snowlib.utils.reflect;
+package io.github.snow1026.snowlib.utils.reflect;
 
 import java.lang.reflect.Constructor;
 

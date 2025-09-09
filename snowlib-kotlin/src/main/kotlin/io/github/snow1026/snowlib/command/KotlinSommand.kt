@@ -1,5 +1,6 @@
-package io.snow1026.snowlib.command
+package io.github.snow1026.snowlib.command
 
+import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 
 /**
@@ -21,7 +22,7 @@ import kotlin.reflect.KClass
  * }
  * ```
  */
-class KotlinSommand(plugin: org.bukkit.plugin.java.JavaPlugin) {
+class KotlinSommand(plugin: JavaPlugin) {
 
     private val javaCommand = Sommand(plugin)
 

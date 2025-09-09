@@ -1,7 +1,7 @@
-package io.snow1026.snowlib.utils;
+package io.github.snow1026.snowlib.utils;
 
 import com.google.gson.*;
-import io.snow1026.snowlib.SnowLibrary;
+import io.github.snow1026.snowlib.SnowLibrary;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.io.File;

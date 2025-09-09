@@ -1,4 +1,4 @@
-package io.snow1026.snowlib.utils;
+package io.github.snow1026.snowlib.utils;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +37,7 @@ public final class InventoryUtils {
         ItemStack it = new ItemStack(material);
         ItemMeta meta = it.getItemMeta();
         if (meta != null) {
-            meta.displayName(io.snow1026.snowlib.utils.Mm.mm(name));
+            meta.displayName(Mm.mm(name));
             meta.lore(Collections.emptyList());
             it.setItemMeta(meta);
         }
@@ -55,8 +55,8 @@ public final class InventoryUtils {
         ItemStack it = new ItemStack(Material.PAPER);
         ItemMeta meta = it.getItemMeta();
         if (meta != null) {
-            meta.displayName(io.snow1026.snowlib.utils.Mm.mm("&bPage &r" + number));
-            meta.lore(Collections.singletonList(io.snow1026.snowlib.utils.Mm.mm("&7Click to go to page " + number)));
+            meta.displayName(Mm.mm("&bPage &r" + number));
+            meta.lore(Collections.singletonList(Mm.mm("&7Click to go to page " + number)));
             if (active) meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
             it.setItemMeta(meta);
         }

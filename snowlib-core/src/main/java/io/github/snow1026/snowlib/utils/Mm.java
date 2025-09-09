@@ -1,4 +1,4 @@
-package io.snow1026.snowlib.utils;
+package io.github.snow1026.snowlib.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
