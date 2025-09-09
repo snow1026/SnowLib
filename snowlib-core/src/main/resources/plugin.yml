@@ -1,0 +1,5 @@
+name: SnowLib
+version: 1.0.0
+main: io.snow1026.snowlib.SnowLibrary
+api-version: 1.20
+author: snow1026
