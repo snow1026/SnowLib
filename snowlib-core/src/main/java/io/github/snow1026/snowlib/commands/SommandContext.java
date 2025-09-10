@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * This interface gives access to the command sender, the original arguments,
  * and type-safe, parsed arguments by name.
  */
-public interface CommandContext {
+public interface SommandContext {
 
     /**
      * Gets the {@link CommandSender} who executed the command.
@@ -50,7 +50,7 @@ public interface CommandContext {
     /**
      * Retrieves a parsed argument by its name.
      *
-     * @param name The name of the argument defined in the {@link CommandNode}.
+     * @param name The name of the argument defined in the {@link SommandNode}.
      * @param <T>  The expected type of the argument.
      * @return The parsed argument value.
      * @throws ClassCastException       if the argument is not of the expected type.

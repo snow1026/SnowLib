@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  *
  * <p>All data is persisted to a single JSON file in the plugin's data folder.</p>
  */
-public class Store {
+public final class Store {
 
     /** JSON storage file */
     private static final File FILE = new File(SnowLibrary.instance.getDataFolder() + "store");

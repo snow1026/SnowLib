@@ -1,5 +1,6 @@
 package io.github.snow1026.snowlib.inventory;
 
+import io.github.snow1026.snowlib.Snow;
 import io.github.snow1026.snowlib.inventory.pagination.PaginationManager;
 import io.github.snow1026.snowlib.utils.Mm;
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ import java.util.function.Consumer;
  * <p>Wrapper around Bukkit Inventory API with builder-style slot management,
  * click handlers, and pagination support.</p>
  */
-public class SnowInventory implements Listener {
+public class SnowInventory extends Snow implements Listener {
 
     private final int rows;
     private final Inventory handle;

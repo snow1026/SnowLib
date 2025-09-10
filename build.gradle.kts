@@ -16,15 +16,6 @@ version = "1.0.0-SNAPSHOT"
 
 val pluginVersion = version.toString()
 
-val nmsProjects by lazy {
-    subprojects.filter {
-        it.path.startsWith(":mappings:") &&
-                it.parent?.name == "mappings" &&
-                it.name != "build" &&
-                it.name.isNotEmpty()
-    }
-}
-
 allprojects {
     apply(plugin = "java")
 
@@ -56,9 +47,6 @@ allprojects {
 
 tasks {
     shadowJar {
-        // NMS 모듈 리오브프에 의존
-        nmsProjects.forEach { dependsOn("${it.path}:reobfJar") }
-
         archiveClassifier.set("")
         archiveFileName.set("SnowLib-$pluginVersion.jar")
         exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA", "module-info.class")
@@ -84,16 +72,6 @@ tasks.register<Copy>("copyJarToServer") {
 dependencies {
     implementation(project(":snowlib-core"))
     implementation(project(":snowlib-kotlin"))
-
-    nmsProjects.forEach { implementation(project(it.path)) }
-}
-
-nmsProjects.forEach { nmsProject ->
-    project(nmsProject.path) {
-        dependencies {
-            implementation(project(":snowlib-core"))
-        }
-    }
 }
 
 // ❌ 중복 및 충돌 소지 제거: 별도 Javadoc 태스크/아티팩트 연결 제거

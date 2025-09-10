@@ -19,15 +19,15 @@ import java.util.stream.Collectors;
  * Each node can represent a literal sub-command, a typed argument, or the root of a command.
  * It holds information about its children, execution logic, permissions, and other constraints.
  */
-public class CommandNode {
+public class SommandNode {
 
     private final String name;
     private final Class<?> type;
     private final ArgumentParser<?> parser;
-    private final Map<String, CommandNode> children = new LinkedHashMap<>();
+    private final Map<String, SommandNode> children = new LinkedHashMap<>();
     private final List<Predicate<CommandSender>> requirements = new ArrayList<>();
 
-    private Consumer<CommandContext> executor;
+    private Consumer<SommandContext> executor;
     private String permission;
     private String permissionMessage = "§cYou do not have permission to use this command.";
     private SuggestionProvider suggestionProvider;
@@ -38,7 +38,7 @@ public class CommandNode {
      * @param name The name of the node (e.g., argument name or literal value).
      * @param type The data type this node represents.
      */
-    protected CommandNode(String name, Class<?> type) {
+    protected SommandNode(String name, Class<?> type) {
         this.name = name;
         this.type = type;
         this.parser = ArgumentParsers.get(type);
@@ -47,14 +47,14 @@ public class CommandNode {
     /**
      * Appends a required argument to this command node.
      *
-     * @param name    The name of the argument, used for retrieval from the {@link CommandContext}.
+     * @param name    The name of the argument, used for retrieval from the {@link SommandContext}.
      * @param type    The class of the argument type (e.g., {@code String.class}, {@code Player.class}).
      * @param builder A consumer to configure the new argument node.
      * @param <T>     The type of the argument.
      * @return This node for chaining.
      */
-    public <T> CommandNode argument(@NotNull String name, @NotNull Class<T> type, @NotNull Consumer<CommandNode> builder) {
-        CommandNode child = new CommandNode(name, type);
+    public <T> SommandNode argument(@NotNull String name, @NotNull Class<T> type, @NotNull Consumer<SommandNode> builder) {
+        SommandNode child = new SommandNode(name, type);
         builder.accept(child);
         children.put(name.toLowerCase(Locale.ROOT), child);
         return this;
@@ -68,7 +68,7 @@ public class CommandNode {
      * @param <T>  The type of the argument.
      * @return This node for chaining.
      */
-    public <T> CommandNode argument(@NotNull String name, @NotNull Class<T> type) {
+    public <T> SommandNode argument(@NotNull String name, @NotNull Class<T> type) {
         return argument(name, type, node -> {});
     }
 
@@ -79,9 +79,9 @@ public class CommandNode {
      * @param builder A consumer to configure the new literal node.
      * @return This node for chaining.
      */
-    public CommandNode literal(@NotNull String name, @NotNull Consumer<CommandNode> builder) {
+    public SommandNode literal(@NotNull String name, @NotNull Consumer<SommandNode> builder) {
         // Literals are treated as String arguments with a specialized parser and suggester
-        CommandNode child = new CommandNode(name, String.class) {
+        SommandNode child = new SommandNode(name, String.class) {
             @Override
             protected @NotNull Object parseValue(CommandSender sender, String input) throws CommandParseException {
                 if (input.equalsIgnoreCase(name)) {
@@ -103,17 +103,17 @@ public class CommandNode {
      * @param name The literal string value.
      * @return This node for chaining.
      */
-    public CommandNode literal(@NotNull String name) {
+    public SommandNode literal(@NotNull String name) {
         return literal(name, node -> {});
     }
 
     /**
      * Defines the action to be performed when this node is successfully reached and executed.
      *
-     * @param executor A consumer that accepts the {@link CommandContext} of the execution.
+     * @param executor A consumer that accepts the {@link SommandContext} of the execution.
      * @return This node for chaining.
      */
-    public CommandNode executes(@NotNull Consumer<CommandContext> executor) {
+    public SommandNode executes(@NotNull Consumer<SommandContext> executor) {
         this.executor = executor;
         return this;
     }
@@ -124,7 +124,7 @@ public class CommandNode {
      * @param permission The permission string.
      * @return This node for chaining.
      */
-    public CommandNode requires(@NotNull String permission) {
+    public SommandNode requires(@NotNull String permission) {
         this.permission = permission;
         return this;
     }
@@ -135,7 +135,7 @@ public class CommandNode {
      * @param message The permission denial message.
      * @return This node for chaining.
      */
-    public CommandNode permissionMessage(@NotNull String message) {
+    public SommandNode permissionMessage(@NotNull String message) {
         this.permissionMessage = message;
         return this;
     }
@@ -147,7 +147,7 @@ public class CommandNode {
      * @param failMessage The message to send if the requirement is not met.
      * @return This node for chaining.
      */
-    public CommandNode requires(@NotNull Predicate<CommandSender> requirement, @NotNull String failMessage) {
+    public SommandNode requires(@NotNull Predicate<CommandSender> requirement, @NotNull String failMessage) {
         this.requirements.add(sender -> {
             if (!requirement.test(sender)) {
                 throw new CommandParseException(failMessage);
@@ -162,7 +162,7 @@ public class CommandNode {
      *
      * @return This node for chaining.
      */
-    public CommandNode playerOnly() {
+    public SommandNode playerOnly() {
         return requires(sender -> sender instanceof Player, "§cThis command can only be run by a player.");
     }
 
@@ -196,7 +196,7 @@ public class CommandNode {
         String currentArg = args[index];
 
         // Find a child node that can parse the current argument
-        for (CommandNode child : children.values()) {
+        for (SommandNode child : children.values()) {
             try {
                 Object parsedValue = child.parseValue(sender, currentArg);
                 context.addArgument(child.name, parsedValue);
@@ -233,7 +233,7 @@ public class CommandNode {
 
         // If not the last argument, traverse down to the matching child
         String nextArg = args[index];
-        for (CommandNode child : children.values()) {
+        for (SommandNode child : children.values()) {
             try {
                 child.parseValue(sender, nextArg);
                 return child.suggestRecursive(sender, args, index + 1);

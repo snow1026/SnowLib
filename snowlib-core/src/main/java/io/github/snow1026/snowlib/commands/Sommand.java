@@ -1,5 +1,6 @@
 package io.github.snow1026.snowlib.commands;
 
+import io.github.snow1026.snowlib.Snow;
 import io.github.snow1026.snowlib.exceptions.CommandParseException;
 import io.github.snow1026.snowlib.commands.handler.DefaultExceptionHandler;
 import io.github.snow1026.snowlib.commands.handler.ExceptionHandler;
@@ -46,13 +47,13 @@ import java.util.*;
  * });
  * }</pre>
  *
- * @see CommandNode
- * @see CommandContext
+ * @see SommandNode
+ * @see SommandContext
  */
-public class Sommand implements TabExecutor {
+public class Sommand extends Snow implements TabExecutor {
 
     private final JavaPlugin plugin;
-    private final Map<String, CommandNode> rootCommands = new HashMap<>();
+    private final Map<String, SommandNode> rootCommands = new HashMap<>();
     private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
 
     /**
@@ -68,13 +69,13 @@ public class Sommand implements TabExecutor {
      * Registers a new top-level command and returns its root node for configuration.
      *
      * @param name The name of the command (case-insensitive).
-     * @return The root {@link CommandNode} for fluent command construction.
+     * @return The root {@link SommandNode} for fluent command construction.
      */
-    public CommandNode register(@NotNull String name) {
+    public SommandNode register(@NotNull String name) {
         Objects.requireNonNull(name, "Command name cannot be null");
         String lowerName = name.toLowerCase(Locale.ROOT);
 
-        CommandNode root = new CommandNode(lowerName, String.class);
+        SommandNode root = new SommandNode(lowerName, String.class);
         this.rootCommands.put(lowerName, root);
 
         registerToBukkit(name, lowerName);
@@ -124,7 +125,7 @@ public class Sommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        CommandNode root = rootCommands.get(command.getName().toLowerCase(Locale.ROOT));
+        SommandNode root = rootCommands.get(command.getName().toLowerCase(Locale.ROOT));
         if (root == null) return false;
 
         try {
@@ -139,7 +140,7 @@ public class Sommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        CommandNode root = rootCommands.get(command.getName().toLowerCase(Locale.ROOT));
+        SommandNode root = rootCommands.get(command.getName().toLowerCase(Locale.ROOT));
         if (root == null) return Collections.emptyList();
         try {
             return root.suggest(sender, args);

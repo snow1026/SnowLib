@@ -36,9 +36,9 @@ class KotlinSommand(plugin: JavaPlugin) {
      * Registers a new command using the Kotlin DSL.
      *
      * @param name The name of the command.
-     * @param block The DSL block for configuring the [CommandNode].
+     * @param block The DSL block for configuring the [SommandNode].
      */
-    fun register(name: String, block: CommandNode.() -> Unit) {
+    fun register(name: String, block: SommandNode.() -> Unit) {
         javaSommand.register(name).apply(block)
     }
 
@@ -56,7 +56,7 @@ class KotlinSommand(plugin: JavaPlugin) {
  * @param type The KClass of the argument's type.
  * @param block A block to configure the argument's node.
  */
-fun <T : Any> CommandNode.argument(name: String, type: KClass<T>, block: CommandNode.() -> Unit = {}) {
+fun <T : Any> SommandNode.argument(name: String, type: KClass<T>, block: SommandNode.() -> Unit = {}) {
     this.argument(name, type.java, block)
 }
 
@@ -66,7 +66,7 @@ fun <T : Any> CommandNode.argument(name: String, type: KClass<T>, block: Command
  * @param name The name of the literal.
  * @param block A block to configure the literal's node.
  */
-fun CommandNode.literal(name: String, block: CommandNode.() -> Unit = {}) {
+fun SommandNode.literal(name: String, block: SommandNode.() -> Unit = {}) {
     this.literal(name, block)
 }
 
@@ -75,7 +75,7 @@ fun CommandNode.literal(name: String, block: CommandNode.() -> Unit = {}) {
  *
  * @param block The action to perform on execution.
  */
-fun CommandNode.executes(block: (ctx: CommandContext) -> Unit) {
+fun SommandNode.executes(block: (ctx: SommandContext) -> Unit) {
     this.executes(block)
 }
 
@@ -87,6 +87,6 @@ fun CommandNode.executes(block: (ctx: CommandContext) -> Unit) {
  * @return The parsed argument.
  * @throws IllegalArgumentException if the argument is not found.
  */
-inline fun <reified T> CommandContext.getArgument(name: String): T {
+inline fun <reified T> SommandContext.getArgument(name: String): T {
     return this.getArgument(name)
 }

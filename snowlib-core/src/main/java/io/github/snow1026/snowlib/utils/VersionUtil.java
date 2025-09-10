@@ -2,7 +2,7 @@ package io.github.snow1026.snowlib.utils;
 
 import org.bukkit.Bukkit;
 
-public class VersionUtil {
+public final class VersionUtil {
 
     public enum MappingsVersion {
         v1_17_R1("1.17", "1.17.1"),

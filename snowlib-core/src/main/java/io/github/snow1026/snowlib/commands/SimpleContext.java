@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * A simple, immutable implementation of {@link CommandContext}.
+ * A simple, immutable implementation of {@link SommandContext}.
  * <p>
  * This class holds information about:
  * <ul>
@@ -20,7 +20,7 @@ import java.util.Map;
  * </ul>
  * Parsed arguments are stored in a case-insensitive manner.
  */
-public final class SimpleContext implements CommandContext {
+public final class SimpleContext implements SommandContext {
     private final CommandSender sender;
     private final String label;
     private final String[] rawArgs;
