@@ -27,10 +27,7 @@ import org.bukkit.inventory.ItemStack
  * inv.openFor(player)
  * ```
  */
-class KotlinSnowInventory(
-    title: String,
-    rows: Int
-) {
+class KotlinSnowInventory( title: String, rows: Int ) {
     private val handle: SnowInventory = SnowInventory(title, rows)
 
     /** Open for player */
