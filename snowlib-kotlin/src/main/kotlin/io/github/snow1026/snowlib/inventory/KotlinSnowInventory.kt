@@ -57,10 +57,7 @@ class KotlinSnowInventory(title: String, rows: Int) {
  *
  * Kotlin DSL wrapper for [SnowSlotBuilder].
  */
-class KotlinSlotBuilder(
-    private val parent: SnowInventory,
-    private val rawSlot: Int
-) {
+class KotlinSlotBuilder(private val parent: SnowInventory, private val rawSlot: Int) {
     fun item(stack: ItemStack?): KotlinSlotBuilder {
         parent.setItemAt(rawSlot, stack)
         return this
