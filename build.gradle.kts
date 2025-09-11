@@ -2,17 +2,15 @@ import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 
 plugins {
-    id("java") // java-library가 java를 포함하지만, 기존 구조 유지
     id("io.github.goooler.shadow") version "8.1.8"
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("java-library")
-    // id("maven-publish") // vanniktech가 내부에서 처리하므로 불필요, 충돌 소지 줄이기 위해 제거
     id("signing")
     id("com.vanniktech.maven.publish") version "0.34.0"
 }
 
 group = "io.github.snow1026"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 
 val pluginVersion = version.toString()
 
@@ -26,7 +24,6 @@ allprojects {
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-        // ❌ 중복 원인 제거: withSourcesJar(), withJavadocJar() 삭제
     }
 
     tasks.withType<JavaCompile>().configureEach {
@@ -34,7 +31,6 @@ allprojects {
         options.release.set(21)
     }
 
-    // Javadoc 태스크 옵션만 조정(아티팩트 추가는 플러그인이 처리)
     tasks.withType<Javadoc>().configureEach {
         (options as StandardJavadocDocletOptions).apply {
             addBooleanOption("Xdoclint:none", true)
@@ -74,36 +70,21 @@ dependencies {
     implementation(project(":snowlib-kotlin"))
 }
 
-// ❌ 중복 및 충돌 소지 제거: 별도 Javadoc 태스크/아티팩트 연결 제거
-// tasks.withType<Javadoc> { ... } 는 위에서 이미 통합했고,
-// afterEvaluate { generateMetadataFileForMavenPublication dependsOn plainJavadocJar } 도 제거
-// (vanniktech 플러그인이 알아서 퍼블리싱 그래프 구성)
-
 mavenPublishing {
-    // Maven Central 타깃
     publishToMavenCentral()
-    // 모든 퍼블리케이션 서명
     signAllPublications()
-    // GAV
     coordinates("io.github.snow1026", "SnowLib", version.toString())
-
-    // ✅ 무엇을 퍼블리시할지 플러그인 DSL로만 제어 (중복 방지)
-    //    - 표준 Javadoc 포함
-    //    - Sources JAR 포함
-    configure(JavaLibrary(
-        javadocJar = JavadocJar.Javadoc(),
-        sourcesJar = true
-    ))
+    configure(JavaLibrary( javadocJar = JavadocJar.Javadoc(), sourcesJar = true ))
 
     pom {
         name.set("SnowLib")
-        description.set("SnowLib.")
+        description.set("snowlib")
         url.set("https://github.com/snow1026/SnowLib")
 
         licenses {
             license {
-                name.set("GPL-3.0")
-                url.set("https://www.gnu.org/licenses/gpl-3.0.txt")
+                name.set("GNU General Public License version 3")
+                url.set("https://opensource.org/licenses/GPL-3.0")
             }
         }
 
@@ -122,6 +103,5 @@ mavenPublishing {
 }
 
 signing {
-    // 로컬 GPG 사용 (환경에 맞게 이미 설정하신 그대로 유지)
     useGpgCmd()
 }
