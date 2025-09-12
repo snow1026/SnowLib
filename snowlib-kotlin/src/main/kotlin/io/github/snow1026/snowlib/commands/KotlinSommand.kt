@@ -12,15 +12,19 @@ import kotlin.reflect.KClass
  * val commands = KotlinSommand(this)
  *
  * commands.register("team") {
- * literal("create") {
- * argument("name", String::class) {
+ * description("Manage teams")
+ * alias("t")
+ * usage("/<command> <create|list> [args]")
+ *
+ * sub("create") {
+ * sub("name", String::class) {
  * executes { ctx ->
  * val teamName = ctx.getArgument<String>("name")
  * ctx.sender.sendMessage("§aTeam '$teamName' created!")
  * }
  * }
  * }
- * literal("list") {
+ * sub("list") {
  * executes { ctx ->
  * ctx.sender.sendMessage("§eTeams: Alpha, Beta, Gamma")
  * }
@@ -49,15 +53,17 @@ class KotlinSommand(plugin: JavaPlugin) {
     fun java(): Sommand = javaSommand
 }
 
+// --- DSL Helpers ---
+
 /**
- * DSL helper to define a required argument.
+ * DSL helper to define a required argument sub-command.
  *
  * @param name The name of the argument.
  * @param type The KClass of the argument's type.
  * @param block A block to configure the argument's node.
  */
-fun <T : Any> SommandNode.argument(name: String, type: KClass<T>, block: SommandNode.() -> Unit = {}) {
-    this.argument(name, type.java, block)
+fun <T : Any> SommandNode.sub(name: String, type: KClass<T>, block: SommandNode.() -> Unit = {}) {
+    this.sub(name, type.java, block)
 }
 
 /**
@@ -66,7 +72,7 @@ fun <T : Any> SommandNode.argument(name: String, type: KClass<T>, block: Sommand
  * @param name The name of the literal.
  * @param block A block to configure the literal's node.
  */
-fun SommandNode.literal(name: String, block: SommandNode.() -> Unit = {}) {
+fun SommandNode.sub(name: String, block: SommandNode.() -> Unit = {}) {
     this.literal(name, block)
 }
 
@@ -78,6 +84,31 @@ fun SommandNode.literal(name: String, block: SommandNode.() -> Unit = {}) {
 fun SommandNode.executes(block: (ctx: SommandContext) -> Unit) {
     this.executes(block)
 }
+
+/**
+ * DSL helper to set aliases for the command. Only effective on the root node.
+ * @param aliases Vararg of alias strings.
+ */
+fun SommandNode.alias(vararg aliases: String) {
+    this.alias(*aliases)
+}
+
+/**
+ * DSL helper to set the description for the command. Only effective on the root node.
+ * @param description The command description.
+ */
+fun SommandNode.description(description: String) {
+    this.description(description)
+}
+
+/**
+ * DSL helper to set the usage message for the command. Only effective on the root node.
+ * @param usage The usage message.
+ */
+fun SommandNode.usage(usage: String) {
+    this.usage(usage)
+}
+
 
 /**
  * A convenience extension to get a non-nullable argument from the context.
