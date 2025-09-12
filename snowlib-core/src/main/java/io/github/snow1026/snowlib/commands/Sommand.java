@@ -23,32 +23,6 @@ import java.util.*;
  * <p>
  * This class handles the automatic registration of commands into Bukkit's {@link CommandMap}
  * and provides a fluent, builder-style API for defining complex command structures with ease.
- *
- * <h2>Key Features</h2>
- * <ul>
- * <li><b>Fluent Builder:</b> Intuitively construct commands via method chaining, starting with {@link #register(String)}.</li>
- * <li><b>Automatic Registration:</b> Simplifies setup by automatically registering commands with Bukkit.</li>
- * <li><b>Custom Exception Handling:</b> Allows for customized handling of permissions failure, argument parsing errors, and more via {@link #setExceptionHandler(ExceptionHandler)}.</li>
- * </ul>
- *
- * <h2>Example Usage</h2>
- * <pre>{@code
- * Sommand sommand = new Sommand(myPlugin);
- *
- * sommand.register("greet")
- * .argument("target", Player.class, targetNode ->
- * targetNode.executes(ctx -> {
- * Player target = ctx.getArgument("target");
- * ctx.sender().sendMessage("Hello, " + target.getName() + "!");
- * })
- * )
- * .executes(ctx -> {
- * ctx.sender().sendMessage("Usage: /greet <player>");
- * });
- * }</pre>
- *
- * @see SommandNode
- * @see SommandContext
  */
 public class Sommand extends Snow implements TabExecutor {
 
@@ -67,6 +41,9 @@ public class Sommand extends Snow implements TabExecutor {
 
     /**
      * Registers a new top-level command and returns its root node for configuration.
+     * <p>
+     * This node can be used to set properties like aliases, description, and usage messages
+     * for the command, in addition to defining its sub-commands and execution logic.
      *
      * @param name The name of the command (case-insensitive).
      * @return The root {@link SommandNode} for fluent command construction.
@@ -75,53 +52,52 @@ public class Sommand extends Snow implements TabExecutor {
         Objects.requireNonNull(name, "Command name cannot be null");
         String lowerName = name.toLowerCase(Locale.ROOT);
 
-        SommandNode root = new SommandNode(lowerName, String.class);
+        PluginCommand cmd = getOrCreateCommand(name);
+        SommandNode root = new SommandNode(lowerName, String.class, cmd);
+
         this.rootCommands.put(lowerName, root);
 
-        registerToBukkit(name, lowerName);
+        cmd.setExecutor(this);
+        cmd.setTabCompleter(this);
+        
         return root;
     }
 
     /**
      * Sets a custom handler for exceptions that occur during command parsing or execution.
      *
-     * @param handler The exception handler to use. If null, the default handler will be used.
+     * @param handler The exception handler to use.
      */
     public void setExceptionHandler(@NotNull ExceptionHandler handler) {
         this.exceptionHandler = Objects.requireNonNull(handler, "Exception handler cannot be null");
     }
 
-    // Sommand.java의 registerToBukkit 메서드 내부
-    private void registerToBukkit(String name, String lowerName) {
+    private PluginCommand getOrCreateCommand(String name) {
         try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
             CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
 
-            // 기존 커맨드를 가져옵니다.
-            Command existing = commandMap.getCommand(lowerName);
-
-            // instanceof로 PluginCommand 타입인지 먼저 확인합니다.
-            if (existing instanceof PluginCommand existingPluginCommand) {
-                // 같은 Sommand 인스턴스가 이미 등록했는지 확인합니다.
-                if (existingPluginCommand.getExecutor() == this) {
-                    return; // 이미 등록되었으므로 중단
-                }
+            Command existing = commandMap.getCommand(name.toLowerCase(Locale.ROOT));
+            if (existing instanceof PluginCommand && ((PluginCommand) existing).getPlugin() == this.plugin) {
+                 // If this plugin already registered it, return the existing command
+                 if (((PluginCommand) existing).getExecutor() == this) {
+                     return (PluginCommand) existing;
+                 }
             }
-
-            // 아래는 기존 등록 로직입니다.
+            
             Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             constructor.setAccessible(true);
-            PluginCommand cmd = constructor.newInstance(name, plugin);
+            PluginCommand newCmd = constructor.newInstance(name, plugin);
+            
+            commandMap.register(plugin.getName().toLowerCase(Locale.ROOT), newCmd);
+            return newCmd;
 
-            cmd.setExecutor(this);
-            cmd.setTabCompleter(this);
-
-            commandMap.register(plugin.getName().toLowerCase(Locale.ROOT), cmd);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to register command '" + name + "'", e);
+            throw new RuntimeException("Failed to register or retrieve command '" + name + "'", e);
         }
     }
+
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -134,6 +110,7 @@ public class Sommand extends Snow implements TabExecutor {
             exceptionHandler.handle(sender, e);
         } catch (Exception e) {
             exceptionHandler.handle(sender, new CommandParseException("An unexpected error occurred.", e));
+            e.printStackTrace(); // Log unexpected errors for debugging
         }
         return true;
     }
